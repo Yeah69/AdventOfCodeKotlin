@@ -1,0 +1,1 @@
+fun main() = Day25().execute()
