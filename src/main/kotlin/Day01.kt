@@ -1,35 +1,62 @@
-class Day01 : Day {
+class Day01 : Day() {
     private val seekedSum = 2020
+    override val number: String
+        get() = "01"
 
-    override fun taskZeroLogic(input: String): String {
-        val maybePair = input.parseExpenses().allPairs().firstOrNull { pair -> pair.first + pair.second == seekedSum }
-        return if (maybePair is Pair<Int,Int>)
-                (maybePair.first * maybePair.second).toString()
-        else "no solution found"
-    }
-    override fun taskOneLogic(input: String): String {
-        val expenses = input.parseExpenses()
-
-        for (i in expenses.indices) {
-            for (j in expenses.indices) {
-                for (k in expenses.indices) {
-                    if (i != j && i !=k && j != k
-                        && expenses[i] + expenses[j] + expenses[k] == seekedSum) {
-                        return (expenses[i] * expenses[j] * expenses[k]).toString();
-                    }
-                }
+    private var expensesInner: List<Int>? = null
+    private val expenses: List<Int>
+        get() {
+            if (expensesInner == null) {
+                expensesInner = input.lines().map { it.toInt() }.toList()
             }
+            return expensesInner ?: listOf()
         }
-        return "No solution found"
+
+    override fun taskZeroLogic(): String {
+        fun isSeekedPair(pair: Pair<Int, Int>):Boolean = pair.first + pair.second == seekedSum
+        fun calculateSolution(pair: Pair<Int, Int>):String = (pair.first * pair.second).toString()
+
+        return expenses
+            .asSequence()
+            .allPairs()
+            .filter(::isSeekedPair)
+            .map(::calculateSolution)
+            .firstOrNull()
+            ?: "no solution found"
     }
-    private fun String.parseExpenses(): List<Int> = this.split('\n').map { it.toInt() }.toList()
-    private fun <T> List<T>.allPairs(): Sequence<Pair<T, T>> {
-        val list = this
+    override fun taskOneLogic(): String {
+        fun isSeekedTriple(triple: Triple<Int, Int, Int>):Boolean = triple.first + triple.second + triple.third == seekedSum
+        fun calculateSolution(triple: Triple<Int, Int, Int>):String = (triple.first * triple.second * triple.third).toString()
+
+        return expenses
+            .asSequence()
+            .allTriples()
+            .filter(::isSeekedTriple)
+            .map(::calculateSolution)
+            .firstOrNull()
+            ?: "no solution found"
+    }
+
+    private fun <T> Sequence<T>.allPairs(): Sequence<Pair<T, T>> {
+        val iterable = this
         return sequence {
             val iterated = mutableListOf<T>()
-            for (i: T in list) {
+            for (i: T in iterable) {
                 for (j: T in iterated) {
                     yield(Pair(i, j))
+                }
+                iterated.add(i)
+            }
+        }
+    }
+
+    private fun <T> Sequence<T>.allTriples(): Sequence<Triple<T, T, T>> {
+        val iterable = this
+        return sequence {
+            val iterated = mutableListOf<T>()
+            for (i: T in iterable) {
+                for (p: Pair<T, T> in iterated.asSequence().allPairs()) {
+                    yield(Triple(p.first, p.second, i))
                 }
                 iterated.add(i)
             }
