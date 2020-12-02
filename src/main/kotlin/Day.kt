@@ -22,14 +22,7 @@ abstract class Day {
 
     private fun taskOneExecution() = taskExecution(::taskOneLogic, "One")
 
-    private var maybeInput: String? = null
-    protected val input: String
-        get() {
-            if (maybeInput == null) {
-                maybeInput = File("input\\2020\\day$number.txt").readText()
-            }
-            return maybeInput ?: ""
-        }
+    protected val input by lazy { File("input\\2020\\day$number.txt").readText() }
 
     fun execute() {
         println("Input =")

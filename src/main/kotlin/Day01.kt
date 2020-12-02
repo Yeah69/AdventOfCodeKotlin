@@ -3,14 +3,7 @@ class Day01 : Day() {
     override val number: String
         get() = "01"
 
-    private var expensesInner: List<Int>? = null
-    private val expenses: List<Int>
-        get() {
-            if (expensesInner == null) {
-                expensesInner = input.lines().map { it.toInt() }.toList()
-            }
-            return expensesInner ?: listOf()
-        }
+    private val expenses by lazy { input.lines().map { it.toInt() }.toList() }
 
     override fun taskZeroLogic(): String {
         fun isSeekedPair(pair: Pair<Int, Int>):Boolean = pair.first + pair.second == seekedSum
