@@ -1,6 +1,6 @@
 class Day01 : Day() {
     private val seekedSum = 2020
-    override val number: String
+    override val label: String
         get() = "01"
 
     private val expenses by lazy { input.lines().map { it.toInt() }.toList() }

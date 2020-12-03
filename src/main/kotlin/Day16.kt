@@ -1,5 +1,5 @@
 class Day16 : Day() {
-    override val number: String
+    override val label: String
         get() = "16"
 
     override fun taskZeroLogic(): String {

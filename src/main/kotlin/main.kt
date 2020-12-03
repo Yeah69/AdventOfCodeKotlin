@@ -1,8 +1,8 @@
 fun main() =
     //Day01().execute()
     //Day02().execute()
-    Day03().execute()
-    //Day04().execute()
+    //Day03().execute()
+    Day04().execute()
     //Day05().execute()
     //Day06().execute()
     //Day07().execute()

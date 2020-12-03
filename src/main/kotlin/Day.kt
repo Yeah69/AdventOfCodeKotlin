@@ -2,7 +2,7 @@ import java.io.File
 import kotlin.system.measureTimeMillis
 
 abstract class Day {
-    protected abstract val number: String
+    protected abstract val label: String
 
     protected abstract fun taskZeroLogic(): String
 
@@ -22,7 +22,7 @@ abstract class Day {
 
     private fun taskOneExecution() = taskExecution(::taskOneLogic, "One")
 
-    protected val input by lazy { File("input\\2020\\day$number.txt").readText() }
+    protected val input by lazy { File("input\\2020\\day$label.txt").readText() }
 
     fun execute() {
         println("Input =")
@@ -31,6 +31,6 @@ abstract class Day {
             taskZeroExecution()
             taskOneExecution()
         }
-        println("(The day took $timeInMillis ms in total)")
+        println("(The day $label took $timeInMillis ms in total)")
     }
 }
