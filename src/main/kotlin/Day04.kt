@@ -5,7 +5,7 @@ class Day04 : Day() {
     private val requiredFields = listOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid")
 
     private val validYearFormRegex: Regex = """^([0-9]{4})$""".toRegex()
-    private val validHeightFormRegex: Regex = """^([0-9]+)(cm|in)$""".toRegex()
+    private val validHeightFormRegex: Regex = """^([0-9]{3}cm|[0-9]{2}in)$""".toRegex()
     private val validHairColorFormRegex: Regex = """^#[0-9a-f]{6}$""".toRegex()
     private val validEyeColorFormRegex: Regex = """^(amb|blu|brn|gry|grn|hzl|oth)$""".toRegex()
     private val validPassportIdFormRegex: Regex = """^([0-9]{9})$""".toRegex()
@@ -33,20 +33,19 @@ class Day04 : Day() {
     override fun taskZeroLogic(): String = logic { true }
 
     override fun taskOneLogic(): String = logic {
-        it.all { field -> when (field.first) {
-            "byr" -> validYearFormRegex.matches(field.second) && field.second >= "1920" && field.second <= "2002"
-            "iyr" -> validYearFormRegex.matches(field.second) && field.second >= "2010" && field.second <= "2020"
-            "eyr" -> validYearFormRegex.matches(field.second) && field.second >= "2020" && field.second <= "2030"
-            "hgt" -> {
-                if (validHeightFormRegex.matches(field.second)) {
-                    val (value, unit) = validHeightFormRegex.find(field.second)!!.destructured
-                    if (unit == "cm") value >= "150" && value <= "193" else value >= "59" && value <= "76"
-                }
-                else false
-            }
-            "hcl" -> validHairColorFormRegex.matches(field.second)
-            "ecl" -> validEyeColorFormRegex.matches(field.second)
-            "pid" -> validPassportIdFormRegex.matches(field.second)
+
+        it.all { field ->
+            val data = field.second
+            when (field.first) {
+                "byr" -> validYearFormRegex.matches(data) && data >= "1920" && data <= "2002"
+                "iyr" -> validYearFormRegex.matches(data) && data >= "2010" && data <= "2020"
+                "eyr" -> validYearFormRegex.matches(data) && data >= "2020" && data <= "2030"
+                "hgt" -> validHeightFormRegex.matches(data)
+                        && (data.endsWith("cm") && data >= "150cm" && data <= "193cm"
+                        || data.endsWith("in") && data >= "59in" && data <= "76in")
+                "hcl" -> validHairColorFormRegex.matches(data)
+                "ecl" -> validEyeColorFormRegex.matches(data)
+                "pid" -> validPassportIdFormRegex.matches(data)
             else -> true
         } }
     }
