@@ -4,9 +4,9 @@ import kotlin.system.measureTimeMillis
 abstract class Day {
     protected abstract val label: String
 
-    protected abstract fun taskZeroLogic(): String
+    abstract fun taskZeroLogic(): String
 
-    protected abstract fun taskOneLogic(): String
+    abstract fun taskOneLogic(): String
 
     private fun taskExecution(logic: () -> String, answerLabel: String)
     {
