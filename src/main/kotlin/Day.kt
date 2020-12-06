@@ -11,9 +11,7 @@ abstract class Day {
     private fun taskExecution(logic: () -> String, answerLabel: String)
     {
         var answer: String
-        val timeInMillis = measureTimeMillis {
-            answer = logic()
-        }
+        val timeInMillis = measureTimeMillis { answer = logic() }
         println("Answer $answerLabel = $answer")
         println("(The task took $timeInMillis ms)")
     }
