@@ -4,7 +4,7 @@ import kotlin.test.assertEquals
 class Day07Test {
     private val day by lazy { Day07() }
     @Test
-    fun zero() = assertEquals("no solution found", day.taskZeroLogic())
+    fun zero() = assertEquals("192", day.taskZeroLogic())
     @Test
-    fun one() = assertEquals("no solution found", day.taskOneLogic())
+    fun one() = assertEquals("12128", day.taskOneLogic())
 }
