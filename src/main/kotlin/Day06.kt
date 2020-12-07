@@ -1,8 +1,7 @@
 import kotlin.streams.asSequence
 
 class Day06 : Day() {
-    override val label: String
-        get() = "06"
+    override val label: String get() = "06"
 
     private val groups by lazy { input
         .split("\r\n\r\n")

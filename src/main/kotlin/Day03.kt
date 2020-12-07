@@ -1,6 +1,5 @@
 class Day03 : Day() {
-    override val label: String
-        get() = "03"
+    override val label: String get() = "03"
 
     private val map by lazy { input
         .lines()

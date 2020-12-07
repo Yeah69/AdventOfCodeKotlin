@@ -1,6 +1,5 @@
 class Day02 : Day() {
-    override val label: String
-        get() = "02"
+    override val label: String get() = "02"
 
     private val policyAndPasswordRegex: Regex = """(\d+)-(\d+) (.): (.*)""".toRegex()
 

@@ -1,6 +1,5 @@
 class Day04 : Day() {
-    override val label: String
-        get() = "04"
+    override val label: String get() = "04"
 
     private val requiredFields = listOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid")
 

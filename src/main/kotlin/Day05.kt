@@ -1,23 +1,15 @@
-import kotlin.math.pow
-
 class Day05 : Day() {
-    override val label: String
-        get() = "05"
+    override val label: String get() = "05"
 
-    private fun String.getCoordinate(distantDirection: Char): Int =
-        this.asSequence()
-            .mapIndexed { i, c -> Pair(i, c) }
-            .filter { it.second == distantDirection }
-            .map { 2.toDouble().pow((this.length - 1 - it.first).toDouble()).toInt() }
-            .sum()
-
-    private val seatingCoordinates by lazy {
+    private val seatingIds by lazy {
         input.lineSequence()
-            .map { Pair(it.substring(0..6), it.substring(7..9)) }
-            .map { Pair(it.first.getCoordinate('B'), it.second.getCoordinate('R')) }
+            .map { it
+                .reversed()
+                .asSequence()
+                .map { c -> if (c == 'R' || c == 'B') 1 else 0 }
+                .mapIndexed { i, j -> j shl i }
+                .sum() }
             .toList() }
-
-    private val seatingIds by lazy { seatingCoordinates.map { it.first * 8 + it.second }.toList() }
 
     override fun taskZeroLogic(): String = seatingIds.maxOf { it }.toString()
 
