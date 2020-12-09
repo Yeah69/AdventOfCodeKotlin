@@ -14,7 +14,7 @@ class Day01 : Day() {
             .filter(::isSeekedPair)
             .map(::calculateSolution)
             .firstOrNull()
-            ?: "no solution found"
+            ?: noSolutionFound
     }
     override fun taskOneLogic(): String {
         fun isSeekedTriple(triple: Triple<Int, Int, Int>):Boolean = triple.first + triple.second + triple.third == seekedSum
@@ -26,20 +26,7 @@ class Day01 : Day() {
             .filter(::isSeekedTriple)
             .map(::calculateSolution)
             .firstOrNull()
-            ?: "no solution found"
-    }
-
-    private fun <T> Sequence<T>.allPairs(): Sequence<Pair<T, T>> {
-        val iterable = this
-        return sequence {
-            val iterated = mutableListOf<T>()
-            for (i: T in iterable) {
-                for (j: T in iterated) {
-                    yield(Pair(i, j))
-                }
-                iterated.add(i)
-            }
-        }
+            ?: noSolutionFound
     }
 
     private fun <T> Sequence<T>.allTriples(): Sequence<Triple<T, T, T>> {

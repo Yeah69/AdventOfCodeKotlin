@@ -57,14 +57,16 @@ class Day08 : Day() {
         .map { it.first }
         .firstOrNull()
         ?.toString()
-        ?: "no solution found"
+        ?: noSolutionFound
 
 
     data class Instruction (val offset: Int, val accAlteration: (Int) -> Int)
 
     class Program (private val instructions: List<Instruction>) {
         var accumulator = 0
+            private set
         var programCounter = 0
+            private set
         val terminated get() = programCounter >= instructions.count()
 
         fun executeNext() {

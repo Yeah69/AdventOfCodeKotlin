@@ -22,5 +22,5 @@ class Day05 : Day() {
             .map { it.first + 1 }
             .singleOrNull()
             ?.toString()
-            ?: "no solution found"
+            ?: noSolutionFound
 }
