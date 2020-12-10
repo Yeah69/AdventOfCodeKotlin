@@ -13,7 +13,7 @@ class Day09 : Day() {
         } }
 
     private val zeroSolution by lazy { checkSequence
-        .filter { it.first.asSequence().allPairs().none { p -> p.first + p.second == it.second} }
+        .filter { it.first.asSequence().allPairs().none { p -> p.first + p.second == it.second } }
         .map { it.second }
         .firstOrNull() }
 
