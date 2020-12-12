@@ -16,7 +16,7 @@ class Day12 : Day() {
 
     private fun Pair<Int, Int>.right(value: Int): Pair<Int, Int> = this.left(360 - (value % 360))
 
-    private fun Pair<Int, Int>.shiftPositionBy(offset: Pair<Int, Int>, factor: Int): Pair<Int, Int> =
+    private fun Pair<Int, Int>.moveBy(offset: Pair<Int, Int>, factor: Int): Pair<Int, Int> =
         Pair(this.first  + (offset.first  * factor), this.second + (offset.second * factor))
 
     private val lineRegex: Regex = """^([NSEWLRF])([0-9]+)$""".toRegex()
@@ -28,35 +28,34 @@ class Day12 : Day() {
             Pair(action, value.toInt()) }
         .toList() }
 
-    private fun logic(initialSituation: Situation, folding: (Situation, Pair<String, Int>) -> Situation): String {
-        val finalSituation = actions.fold(initialSituation, folding)
+    private fun logic(
+        initialSituation: Situation,
+        generateWaypoints: (Situation, Pair<String, Int>) -> Pair<Pair<Int, Int>, Pair<Int, Int>>): String {
+        val finalSituation = actions.fold(initialSituation) { prevSituation, next ->
+            val (movingWaypoint, nextWaypoint) = generateWaypoints(prevSituation, next)
+            val newShipPosition = prevSituation.shipPosition.moveBy(movingWaypoint, next.second)
+            Situation(nextWaypoint, newShipPosition) }
         return (abs(finalSituation.shipPosition.first) + abs(finalSituation.shipPosition.second)).toString()
     }
 
     override fun taskZeroLogic(): String = logic(Situation(Pair(1, 0), Pair(0, 0))) { prevSituation, next ->
-        val newWaypoint = when (next.first) {
-            "N" -> Pair( 0,  1)
-            "S" -> Pair( 0, -1)
-            "W" -> Pair(-1,  0)
-            "E" -> Pair( 1,  0)
+        val movingWaypoint = when (next.first) {
+            "N" ->  Pair( 0,  1)
+            "S" ->  Pair( 0, -1)
+            "W" ->  Pair(-1,  0)
+            "E" ->  Pair( 1,  0)
+            "F" ->  prevSituation.waypoint
+            else -> Pair( 0,  0) }
+
+        val nextWaypoint = when (next.first) {
             "L" -> prevSituation.waypoint.left(next.second)
             "R" -> prevSituation.waypoint.right(next.second)
-            else -> prevSituation.waypoint
-        }
-        val facingWaypoint = when (next.first) {
-            "L" -> newWaypoint
-            "R" -> newWaypoint
-            else -> prevSituation.waypoint
-        }
-        val newShipPosition =
-            if (next.first != "L" && next.first != "R")
-                prevSituation.shipPosition.shiftPositionBy(newWaypoint, next.second)
-            else
-                prevSituation.shipPosition
-        Situation(facingWaypoint, newShipPosition) }
+            else -> prevSituation.waypoint }
+
+        Pair(movingWaypoint, nextWaypoint) }
 
     override fun taskOneLogic(): String = logic(Situation(Pair(10, 1), Pair(0, 0))) { prevSituation, next ->
-        val newWaypoint = when (next.first) {
+        val nexWaypoint = when (next.first) {
             "N" -> Pair(prevSituation.waypoint.first,               prevSituation.waypoint.second + next.second)
             "S" -> Pair(prevSituation.waypoint.first,               prevSituation.waypoint.second - next.second)
             "W" -> Pair(prevSituation.waypoint.first - next.second, prevSituation.waypoint.second              )
@@ -66,11 +65,7 @@ class Day12 : Day() {
             else -> prevSituation.waypoint
         }
 
-        val newShipPosition =
-            if (next.first == "F")
-                prevSituation.shipPosition.shiftPositionBy(newWaypoint, next.second)
-            else
-                prevSituation.shipPosition
+        val movingWayPoint = if (next.first == "F") nexWaypoint else Pair(0, 0)
 
-        Situation(newWaypoint, newShipPosition) }
+        Pair(movingWayPoint, nexWaypoint) }
 }
