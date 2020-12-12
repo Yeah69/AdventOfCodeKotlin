@@ -39,29 +39,29 @@ class Day12 : Day() {
     }
 
     override fun taskZeroLogic(): String = logic(Situation(Pair(1, 0), Pair(0, 0))) { prevSituation, next ->
-        val movingWaypoint = when (next.first) {
-            "N" ->  Pair( 0,  1)
-            "S" ->  Pair( 0, -1)
-            "W" ->  Pair(-1,  0)
-            "E" ->  Pair( 1,  0)
-            "F" ->  prevSituation.waypoint
-            else -> Pair( 0,  0) }
-
         val nextWaypoint = when (next.first) {
-            "L" -> prevSituation.waypoint.left(next.second)
-            "R" -> prevSituation.waypoint.right(next.second)
+            "L"  -> prevSituation.waypoint.left (next.second)
+            "R"  -> prevSituation.waypoint.right(next.second)
             else -> prevSituation.waypoint }
+
+        val movingWaypoint = when (next.first) {
+            "N"  -> Pair( 0,  1)
+            "S"  -> Pair( 0, -1)
+            "W"  -> Pair(-1,  0)
+            "E"  -> Pair( 1,  0)
+            "F"  -> prevSituation.waypoint
+            else -> Pair( 0,  0) }
 
         Pair(movingWaypoint, nextWaypoint) }
 
     override fun taskOneLogic(): String = logic(Situation(Pair(10, 1), Pair(0, 0))) { prevSituation, next ->
         val nexWaypoint = when (next.first) {
-            "N" -> Pair(prevSituation.waypoint.first,               prevSituation.waypoint.second + next.second)
-            "S" -> Pair(prevSituation.waypoint.first,               prevSituation.waypoint.second - next.second)
-            "W" -> Pair(prevSituation.waypoint.first - next.second, prevSituation.waypoint.second              )
-            "E" -> Pair(prevSituation.waypoint.first + next.second, prevSituation.waypoint.second              )
-            "L" -> prevSituation.waypoint.left(next.second)
-            "R" -> prevSituation.waypoint.right(next.second)
+            "N"  -> Pair(prevSituation.waypoint.first,               prevSituation.waypoint.second + next.second)
+            "S"  -> Pair(prevSituation.waypoint.first,               prevSituation.waypoint.second - next.second)
+            "W"  -> Pair(prevSituation.waypoint.first - next.second, prevSituation.waypoint.second              )
+            "E"  -> Pair(prevSituation.waypoint.first + next.second, prevSituation.waypoint.second              )
+            "L"  -> prevSituation.waypoint.left(next.second)
+            "R"  -> prevSituation.waypoint.right(next.second)
             else -> prevSituation.waypoint
         }
 
