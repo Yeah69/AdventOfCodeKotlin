@@ -8,7 +8,6 @@ class Day12 : Day() {
 
     private fun Pair<Int, Int>.left(value: Int): Pair<Int, Int> =
         when ((value % 360) / 90) {
-            0 -> this
             1 -> Pair(-this.second,  this.first)
             2 -> Pair(-this.first,  -this.second)
             3 -> Pair( this.second, -this.first)
@@ -21,8 +20,7 @@ class Day12 : Day() {
 
     private val lineRegex: Regex = """^([NSEWLRF])([0-9]+)$""".toRegex()
 
-    private val actions by lazy { input
-        .lineSequence()
+    private val actions by lazy { input.lineSequence()
         .map {
             val (action, value) = lineRegex.find(it)?.destructured ?: throw Exception()
             Pair(action, value.toInt()) }
