@@ -13,6 +13,19 @@ fun <T> Sequence<T>.allPairs(): Sequence<Pair<T, T>> {
     }
 }
 
+fun <T> Sequence<T>.allTriples(): Sequence<Triple<T, T, T>> {
+    val iterable = this
+    return sequence {
+        val iterated = mutableListOf<T>()
+        for (i: T in iterable) {
+            for (p: Pair<T, T> in iterated.asSequence().allPairs()) {
+                yield(Triple(p.first, p.second, i))
+            }
+            iterated.add(i)
+        }
+    }
+}
+
 internal enum class ConsoleColor(private val code: String) {
     //Color end string, color reset
     RESET("\u001b[0m"),  // Regular Colors. Normal color, no bold, background color etc.

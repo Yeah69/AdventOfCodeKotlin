@@ -28,17 +28,4 @@ class Day01 : Day() {
             .firstOrNull()
             ?: noSolutionFound
     }
-
-    private fun <T> Sequence<T>.allTriples(): Sequence<Triple<T, T, T>> {
-        val iterable = this
-        return sequence {
-            val iterated = mutableListOf<T>()
-            for (i: T in iterable) {
-                for (p: Pair<T, T> in iterated.asSequence().allPairs()) {
-                    yield(Triple(p.first, p.second, i))
-                }
-                iterated.add(i)
-            }
-        }
-    }
 }
