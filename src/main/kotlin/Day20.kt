@@ -7,6 +7,10 @@ class Day20 : Day() {
     override val label: String get() = "20"
 
     class TileContent(var content: List<String>) {
+
+        val mergeAbleContent: List<String>
+            get() = content.drop(1).dropLast(1).map { it.substring(1 until (it.length - 1)) }
+
         fun rotateBy(steps: Int) {
             when (steps % 4) {
                 1 -> { content = (content[0].indices).map { content.reversed().map { s -> s[it] }.joinToString("") }.toList() }
@@ -16,11 +20,10 @@ class Day20 : Day() {
             }
         }
 
-        fun flipHorizontally() {
-            content = content.reversed().toList()
-        }
+        private fun flipHorizontally() { content = content.reversed().toList() }
 
-        private val pattern = listOf(0 to 1, 1 to 2,
+        private val pattern = listOf(
+            0 to 1, 1 to 2,
             4 to 2, 5 to 1, 6 to 1, 7 to 2,
             10 to 2, 11 to 1, 12 to 1, 13 to 2,
             16 to 2, 17 to 1, 18 to 0, 18 to 1, 19 to 1)
@@ -43,19 +46,42 @@ class Day20 : Day() {
                 }
             return diff.any() to allHashtags.subtract(diff).count()
         }
+
+        fun allRotationsAndFlips(): Sequence<TileContent> {
+            val thisTileContent = this
+            return sequence {
+                for(i in (0..3)) {
+                    yield(thisTileContent)
+                    rotateBy(1)
+                }
+                flipHorizontally()
+                for(i in (0..2)) {
+                    yield(thisTileContent)
+                    rotateBy(1)
+                }
+                yield(thisTileContent)
+            }
+        }
     }
 
-    class Tile(val id: Int, var edge0: String, var edge1: String, var edge2: String, var edge3: String, val content: TileContent) {
-        val edge0rev: String
+    class Tile(val id: Int, val content: TileContent) {
+
+        private val edge0: String
+            get() = content.content[0]
+        private val edge1: String
+            get() = content.content.map { it.last() }.joinToString("")
+        private val edge2: String
+            get() = content.content.last().reversed()
+        private val edge3: String
+            get() = content.content.reversed().map { it.first() }.joinToString("")
+
+        private val edge0rev: String
             get() = edge0.reversed()
-
-        val edge1rev: String
+        private val edge1rev: String
             get() = edge1.reversed()
-
-        val edge2rev: String
+        private val edge2rev: String
             get() = edge2.reversed()
-
-        val edge3rev: String
+        private val edge3rev: String
             get() = edge3.reversed()
 
         fun countOfBorderEdges(tileSet: List<Tile>): Int {
@@ -81,56 +107,17 @@ class Day20 : Day() {
             else -1
         }
 
-        fun rotateBy(steps: Int) {
-            val i = steps % 4
-            when (i) {
-                1 -> {
-                    val e0 = edge3; val e1 = edge0; val e2 = edge1; val e3 = edge2
-                    edge0 = e0; edge1 = e1; edge2 = e2; edge3 = e3
-                }
-                2 -> {
-                    val e0 = edge2; val e1 = edge3; val e2 = edge0; val e3 = edge1
-                    edge0 = e0; edge1 = e1; edge2 = e2; edge3 = e3
-                }
-                3 -> {
-                    val e0 = edge1; val e1 = edge2; val e2 = edge3; val e3 = edge0
-                    edge0 = e0; edge1 = e1; edge2 = e2; edge3 = e3
-                }
-                else -> {}
-            }
-            content.rotateBy(i)
-        }
+        fun rotateBy(steps: Int) = content.rotateBy(steps)
 
-        fun flipHorizontally()
-        {
-            val e0 = edge2rev; val e1 = edge1rev; val e2 = edge0rev; val e3 = edge3rev
-            edge0 = e0; edge1 = e1; edge2 = e2; edge3 = e3
-            content.flipHorizontally()
-        }
-
-        fun fitsTo(up: Tile?, right: Tile?, down: Tile?, left: Tile?): Boolean {
-            fun fitsToInner(): Boolean =
+        fun fitsTo(up: Tile?, right: Tile?, down: Tile?, left: Tile?): Boolean =
+            content.allRotationsAndFlips().firstOrNull {
                 (up == null || up.edge2 == edge0rev) &&
-                        (right == null || right.edge3 == edge1rev) &&
-                        (down == null || down.edge0 == edge2rev) &&
-                        (left == null || left.edge1 == edge3rev)
-            for(i in (0..3)) {
-                if (fitsToInner()) return true
-                rotateBy(1)
-            }
-            flipHorizontally()
-            for(i in (0..3)) {
-                if (fitsToInner()) return true
-                rotateBy(1)
-            }
-            flipHorizontally()
-            return false
-        }
+                    (right == null || right.edge3 == edge1rev) &&
+                    (down == null || down.edge0 == edge2rev) &&
+                    (left == null || left.edge1 == edge3rev) } != null
     }
 
     class TileHolder {
-        var x: Int = 0
-        var y: Int = 0
         var tile: Tile? = null
         var up: TileHolder? = null
         var down: TileHolder? = null
@@ -171,15 +158,8 @@ class Day20 : Day() {
                 val (idText) = idRegex.find(text.lineSequence().first())?.destructured ?: throw Exception()
                 val id = idText.toIntOrNull() ?: throw Exception()
                 val tileLines = text.lineSequence().drop(1).filterNot { it.isBlank() }.toList()
-                val edge0 = tileLines.first()
-                val edge2 = tileLines.last().reversed()
-                val edge1 = tileLines.asSequence().map { it.last() }.joinToString("")
-                val edge3 = tileLines.reversed().asSequence().map { it.first() }.joinToString("")
-                val content = TileContent(tileLines
-                    .drop(1)
-                    .dropLast(1)
-                    .map { line -> line.substring(1 until (line.length - 1)) })
-                Tile(id, edge0, edge1, edge2, edge3, content)
+                val content = TileContent(tileLines)
+                Tile(id, content)
             }
             .toList() }
 
@@ -194,8 +174,6 @@ class Day20 : Day() {
             val mapInner = Array(mapWidth) { Array(mapWidth) { TileHolder() } }
             for (y in mapInner.indices)
                 for (x in mapInner[y].indices) {
-                    mapInner[y][x].x = x
-                    mapInner[y][x].y = y
                     if (x > 0)                    mapInner[y][x].left  = mapInner[y    ][x - 1]
                     if (x < mapInner[y].size - 1) mapInner[y][x].right = mapInner[y    ][x + 1]
                     if (y > 0)                    mapInner[y][x].up    = mapInner[y - 1][x    ]
@@ -211,7 +189,7 @@ class Day20 : Day() {
 
         fun cornerIdsMultiplication(): Long = cornerTiles.fold(1L) { acc, next -> acc * next.id.toLong() }
 
-        fun arrangeTiles() {
+        fun arrangeTiles(): BiggerPicture {
             initializeUpperLeftCorner()
             val unArrangedTiles = tiles.filterNot { it == map[0][0].tile }.toHashSet()
             val queue = LinkedList<TileHolder>()
@@ -222,12 +200,13 @@ class Day20 : Day() {
                 if (current.checkAndSetSingleFit(unArrangedTiles)) current.appendUnassignedNeighbors(queue)
                 else queue.addLast(current)
             }
+            return this
         }
 
         fun mergeContent(): TileContent {
             val content = map
-                .flatMap { arr -> (0 until (arr[0].tile?.content?.content?.size ?: 0))
-                    .map { arr.map { t -> t.tile?.content?.content!![it] }.joinToString("") } }
+                .flatMap { arr -> (0 until (arr[0].tile?.content?.mergeAbleContent?.size ?: 0))
+                    .map { arr.map { t -> t.tile?.content?.mergeAbleContent!![it] }.joinToString("") } }
                 .toList()
 
             return TileContent(content)
@@ -238,23 +217,14 @@ class Day20 : Day() {
 
     override fun taskZeroLogic(): String = biggerPicture.cornerIdsMultiplication().toString()
 
-    override fun taskOneLogic(): String {
-        biggerPicture.arrangeTiles()
-        val mergeContent = biggerPicture.mergeContent()
-
-        for(i in (0..3)) {
-            val (any, count) = mergeContent.waterRoughness()
-            if (any) return count.toString()
-            mergeContent.rotateBy(1)
-        }
-        mergeContent.flipHorizontally()
-        for(i in (0..3)) {
-            val (any, count) = mergeContent.waterRoughness()
-            if (any) return count.toString()
-            mergeContent.rotateBy(1)
-            val (any1, count1) = mergeContent.waterRoughness()
-            if (any1) return count1.toString()
-        }
-        return noSolutionFound
-    }
+    override fun taskOneLogic(): String = biggerPicture
+        .arrangeTiles()
+        .mergeContent()
+        .allRotationsAndFlips()
+        .map { it.waterRoughness() }
+        .filter { it.first }
+        .map { it.second }
+        .firstOrNull()
+        ?.toString()
+        ?: noSolutionFound
 }

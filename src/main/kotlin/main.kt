@@ -1,1 +1,1 @@
-fun main() = Day21().execute()
+fun main() = Day22().execute()
