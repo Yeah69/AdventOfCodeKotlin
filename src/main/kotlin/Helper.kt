@@ -1,5 +1,7 @@
 var noSolutionFound = "no solution found"
 
+var nothingToDoHere = "nothing to do here"
+
 fun <T> Sequence<T>.allPairs(): Sequence<Pair<T, T>> {
     val iterable = this
     return sequence {
